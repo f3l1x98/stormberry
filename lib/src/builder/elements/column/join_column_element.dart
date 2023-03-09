@@ -5,7 +5,9 @@ import '../join_table_element.dart';
 import '../table_element.dart';
 import 'column_element.dart';
 
-class JoinColumnElement extends ColumnElement with RelationalColumnElement, LinkedColumnElement {
+// Stores data for ManyToMany relations including the two tables, join table and the foreign keys
+class JoinColumnElement extends ColumnElement
+    with RelationalColumnElement, LinkedColumnElement {
   @override
   final FieldElement parameter;
   @override
@@ -14,17 +16,22 @@ class JoinColumnElement extends ColumnElement with RelationalColumnElement, Link
 
   late JoinColumnElement referencedColumn;
 
-  JoinColumnElement(this.parameter, this.linkedTable, this.joinTable, TableElement parentBuilder,
-      BuilderState state)
+  JoinColumnElement(this.parameter, this.linkedTable, this.joinTable,
+      TableElement parentBuilder, BuilderState state)
       : super(parentBuilder, state) {
     if (converter != null) {
-      print('Relational field was annotated with @UseConverter(...), which is not supported.\n'
+      print(
+          'Relational field was annotated with @UseConverter(...), which is not supported.\n'
           '  - ${parameter.getDisplayString(withNullability: true)}');
     }
   }
 
+  String get paramName => parameter.name;
+  String get referencedParamName => referencedColumn.parameter.name;
+
   String get columnName =>
-      parentTable.getForeignKeyName()! + (referencedColumn.parentTable == parentTable ? '_a' : '');
+      parentTable.getForeignKeyName()! +
+      (referencedColumn.parentTable == parentTable ? '_a' : '');
 
   @override
   bool get isList => true;
